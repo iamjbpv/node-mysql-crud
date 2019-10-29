@@ -33,22 +33,42 @@ router.post('/', (req,res) => {
             console.error(err.message);
             return res.status(500).send('Server Error');
         }
-        console.log(result);
-        return res.send('Inserted');
+        mysqlConnection.query(`SELECT * from ${table_name} WHERE id =${result.insertId} AND is_deleted = 0`, (err, rows, fields) => {
+            if(!err) {
+                return res.json(rows);
+            } else {
+                console.log(err.message)
+            }
+        });
     });
 });
 
 router.put('/', (req,res) => {
-    // const id = req.params.id;
-    const { id, email, first_name, last_name, password } = req.body;
-    var sql = `UPDATE ${table_name} SET password = '${password}' WHERE id = ${id}`;
+    // const id = req.params.id;\
+    const id = req.body.id;
+    var sql ="";
+    for (var key in req.body) {
+        if (req.body.hasOwnProperty(key) && key != "id") {
+            item = req.body[key];
+            console.log(item);
+            sql += `UPDATE ${table_name} SET ${key} = '${item}' WHERE id = ${id};`;
+        }
+    }
+    // console.log(sql);
     mysqlConnection.query(sql, function (err, result) {
         if (err){
             console.error(err.message);
             return res.status(500).send('Server Error');
         }
-        console.log(result);
-        return res.send('Updated');
+        mysqlConnection.query(`SELECT * from ${table_name} WHERE id =${id} AND is_deleted = 0`, (err, rows, fields) => {
+            if(!err) {
+                return res.json(rows);
+            } else {
+                console.log(err.message)
+            }
+        });
+        // console.log(result);
+        // return res.send('Updated');
     });
 });
 

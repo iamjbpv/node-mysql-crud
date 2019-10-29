@@ -50598,7 +50598,30 @@ TreeviewList.defaultProps = {
 TreeviewList.contextTypes = {
   theme: propTypes.string
 };
-},{"react":"../../node_modules/react/index.js","classnames":"../../node_modules/classnames/index.js","react-transition-group":"../../node_modules/mdbreact/node_modules/react-transition-group/esm/index.js","react-dom":"../../node_modules/react-dom/index.js","react-popper":"../../node_modules/react-popper/lib/esm/index.js","react-numeric-input":"../../node_modules/react-numeric-input/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","mdbreact":"../../node_modules/mdbreact/dist/mdbreact.esm.js"}],"components/App.js":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","classnames":"../../node_modules/classnames/index.js","react-transition-group":"../../node_modules/mdbreact/node_modules/react-transition-group/esm/index.js","react-dom":"../../node_modules/react-dom/index.js","react-popper":"../../node_modules/react-popper/lib/esm/index.js","react-numeric-input":"../../node_modules/react-numeric-input/index.js","react-router-dom":"../../node_modules/react-router-dom/esm/react-router-dom.js","mdbreact":"../../node_modules/mdbreact/dist/mdbreact.esm.js"}],"components/Alert.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _mdbreact = require("mdbreact");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Alert = function Alert() {
+  return _react.default.createElement(_mdbreact.MDBContainer, null, _react.default.createElement(_mdbreact.MDBAlert, {
+    color: "warning",
+    dismiss: true
+  }, _react.default.createElement("strong", null, "Holy guacamole!"), " You should check in on some of those fields below."));
+};
+
+var _default = Alert;
+exports.default = _default;
+},{"react":"../../node_modules/react/index.js","mdbreact":"../../node_modules/mdbreact/dist/mdbreact.esm.js"}],"components/App.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -50609,6 +50632,8 @@ exports.default = void 0;
 var _react = _interopRequireWildcard(require("react"));
 
 var _axios = _interopRequireDefault(require("axios"));
+
+var _Alert = _interopRequireDefault(require("./Alert"));
 
 var _mdbreact = require("mdbreact");
 
@@ -50644,6 +50669,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var api_url = 'http://localhost:3000/api';
 
+var TableAction = function TableAction(_ref) {
+  var handleClick = _ref.handleClick,
+      person = _ref.person;
+  return _react.default.createElement("div", {
+    className: "text-center"
+  }, _react.default.createElement(_mdbreact.MDBBtn, {
+    onClick: handleClick(person, 'Update'),
+    color: "blue",
+    size: "sm"
+  }, "Edit"), _react.default.createElement(_mdbreact.MDBBtn, {
+    onClick: handleClick(person, 'Delete'),
+    color: "red",
+    size: "sm"
+  }, "Delete"));
+};
+
 var App =
 /*#__PURE__*/
 function (_Component) {
@@ -50664,6 +50705,7 @@ function (_Component) {
 
     _defineProperty(_assertThisInitialized(_this), "state", {
       modal1: false,
+      modal2: false,
       person_frm: [{
         email: '',
         first_name: '',
@@ -50695,14 +50737,47 @@ function (_Component) {
       }
     });
 
-    _defineProperty(_assertThisInitialized(_this), "handleClick", function (data) {
-      return function () {
-        console.log('data:', data);
+    _defineProperty(_assertThisInitialized(_this), "loadData", function () {
+      _axios.default.get("".concat(api_url, "/people")).then(function (res) {
+        var persons = res.data;
+        var person_data = persons.map(function (person) {
+          return {
+            id: person.id,
+            email: person.email,
+            first_name: person.first_name,
+            last_name: person.last_name,
+            handle: _react.default.createElement(TableAction, {
+              handleClick: _this.handleClick,
+              person: person
+            }) // clickEvent: e => this.handleClick(e, person_data)
+
+          };
+        });
+        console.log(person_data);
 
         _this.setState({
-          person_frm: data,
-          txnType: 'Update'
+          persons_table: _objectSpread({}, _this.state.persons_table, {
+            rows: person_data
+          })
         });
+      }).then(function () {
+        console.log(_this.state.persons_table);
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this), "handleClick", function (data, txnType) {
+      return function () {
+        // console.log('data:', data);
+        _this.setState({
+          person_frm: data,
+          txnType: txnType
+        });
+
+        if (txnType === "Delete") {
+          _this.toggleViaDt(2);
+
+          return;
+        }
 
         _this.toggleViaDt(1);
       };
@@ -50734,12 +50809,77 @@ function (_Component) {
 
     _defineProperty(_assertThisInitialized(_this), "savePerson", function () {
       var person_frm = _this.state.person_frm;
-      console.log(person_frm);
+      var txnType = _this.state.txnType;
 
-      _axios.default.post("".concat(api_url, "/people"), person_frm).then(function (res) {
-        console.log(res);
-        console.log(res.data);
-      });
+      if (txnType === "Create") {
+        _axios.default.post("".concat(api_url, "/people"), person_frm).then(function (res) {
+          console.log(res.status);
+          console.log(res.data[0]);
+
+          _this.toggleViaDt(1);
+
+          var person_data = _this.state.persons_table.rows.concat(res.data[0]);
+
+          _this.setState({
+            persons_table: _objectSpread({}, _this.state.persons_table, {
+              rows: person_data
+            })
+          });
+        }).catch(function (error) {
+          console.log(error.message);
+        });
+      } else if (txnType === "Update") {
+        _axios.default.put("".concat(api_url, "/people/"), person_frm).then(function (res) {
+          // console.log(res.status);
+          // console.log(res.data);
+          _this.toggleViaDt(1);
+
+          var person_data = _this.state.persons_table.rows;
+          person_data.filter(function (f) {
+            if (f.id == res.data[0].id) {
+              var person = {
+                id: res.data[0].id,
+                email: res.data[0].email,
+                first_name: res.data[0].first_name,
+                last_name: res.data[0].last_name
+              };
+              f.email = res.data[0].email, f.first_name = res.data[0].first_name, f.last_name = res.data[0].last_name, f.handle = _react.default.createElement(TableAction, {
+                handleClick: _this.handleClick,
+                person: person
+              });
+            } else {
+              return f;
+            }
+          }); // create entirely new array of only items who dont match the param i.d
+
+          _this.setState({
+            persons_table: _objectSpread({}, _this.state.persons_table, {
+              rows: person_data
+            })
+          });
+        }).catch(function (error) {
+          console.log(error.message);
+        });
+      } else if (txnType === "Delete") {
+        _axios.default.delete("".concat(api_url, "/people/").concat(person_frm.id)).then(function (res) {
+          // console.log(res.status);
+          // console.log(res.data);
+          _this.toggleViaDt(2);
+
+          var person_data = _this.state.persons_table.rows.filter(function (f) {
+            return f.id != person_frm.id;
+          }); // create entirely new array of only items who dont match the param i.d
+
+
+          _this.setState({
+            persons_table: _objectSpread({}, _this.state.persons_table, {
+              rows: person_data
+            })
+          });
+        }).catch(function (error) {
+          console.log(error.message);
+        });
+      }
     });
 
     return _this;
@@ -50748,35 +50888,7 @@ function (_Component) {
   _createClass(App, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      var _this2 = this;
-
-      _axios.default.get("".concat(api_url, "/people")).then(function (res) {
-        var persons = res.data;
-        var person_data = persons.map(function (person) {
-          return {
-            email: person.email,
-            first_name: person.first_name,
-            last_name: person.last_name,
-            handle: _react.default.createElement("div", {
-              className: "text-center"
-            }, _react.default.createElement(_mdbreact.MDBBtn, {
-              onClick: _this2.handleClick(person),
-              color: "blue",
-              size: "sm"
-            }, "Edit")) // clickEvent: e => this.handleClick(e, person_data)
-
-          };
-        });
-        console.log(person_data);
-
-        _this2.setState({
-          persons_table: _objectSpread({}, _this2.state.persons_table, {
-            rows: person_data
-          })
-        });
-      }).then(function () {
-        console.log(_this2.state.persons_table);
-      });
+      this.loadData();
     }
   }, {
     key: "handleChange",
@@ -50791,9 +50903,11 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
+      var _this2 = this;
 
-      return _react.default.createElement("div", null, _react.default.createElement("h1", null, "MySQL + Express + React + Node CRUD"), _react.default.createElement(_mdbreact.MDBBtn, {
+      return _react.default.createElement("div", {
+        className: "container"
+      }, _react.default.createElement(_Alert.default, null), _react.default.createElement("h1", null, "MySQL + Express + React + Node CRUD"), _react.default.createElement(_mdbreact.MDBBtn, {
         onClick: this.addPerson,
         color: "green",
         size: "sm"
@@ -50816,7 +50930,7 @@ function (_Component) {
         label: "Type your Email",
         name: "email",
         onChange: function onChange(e) {
-          _this3.handleChange(e);
+          _this2.handleChange(e);
         },
         value: this.state.person_frm.email,
         icon: "envelope",
@@ -50829,7 +50943,7 @@ function (_Component) {
         label: "Type your First Name",
         name: "first_name",
         onChange: function onChange(e) {
-          _this3.handleChange(e);
+          _this2.handleChange(e);
         },
         value: this.state.person_frm.first_name,
         icon: "user",
@@ -50840,7 +50954,7 @@ function (_Component) {
         label: "Type your Last Name",
         name: "last_name",
         onChange: function onChange(e) {
-          _this3.handleChange(e);
+          _this2.handleChange(e);
         },
         value: this.state.person_frm.last_name,
         icon: "user",
@@ -50851,7 +50965,24 @@ function (_Component) {
         className: "justify-content-center"
       }, _react.default.createElement(_mdbreact.MDBBtn, {
         onClick: this.savePerson
-      }, "Save")))));
+      }, "Save")))), _react.default.createElement(_mdbreact.MDBContainer, null, _react.default.createElement(_mdbreact.MDBModal, {
+        position: "top",
+        backdrop: false,
+        frame: true,
+        isOpen: this.state.modal2,
+        toggle: this.toggle(2)
+      }, _react.default.createElement(_mdbreact.MDBModalBody, null, _react.default.createElement(_mdbreact.MDBRow, {
+        className: "justify-content-center align-items-center"
+      }, _react.default.createElement("p", {
+        className: "pt-3 pr-2"
+      }, "Are you sure you want to remove this data?"), _react.default.createElement(_mdbreact.MDBBtn, {
+        color: "red",
+        onClick: this.savePerson
+      }, "Yes"), _react.default.createElement(_mdbreact.MDBBtn, {
+        color: "primary",
+        outline: true,
+        onClick: this.toggle(2)
+      }, "No"))))));
     }
   }]);
 
@@ -50860,7 +50991,7 @@ function (_Component) {
 
 var _default = App;
 exports.default = _default;
-},{"react":"../../node_modules/react/index.js","axios":"../../node_modules/axios/index.js","mdbreact":"../../node_modules/mdbreact/dist/mdbreact.esm.js"}],"../../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
+},{"react":"../../node_modules/react/index.js","axios":"../../node_modules/axios/index.js","./Alert":"components/Alert.js","mdbreact":"../../node_modules/mdbreact/dist/mdbreact.esm.js"}],"../../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
 var bundleURL = null;
 
 function getBundleURLCached() {
@@ -50997,7 +51128,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "37013" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "27141" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
