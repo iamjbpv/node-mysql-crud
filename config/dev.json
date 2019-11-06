@@ -1,0 +1,10 @@
+{
+    "sample": "sample data",
+    "db_config" : {
+        "host": "localhost",
+        "user": "root",
+        "password": "",
+        "database": "nodedemo",
+        "multipleStatements": true
+    }
+}

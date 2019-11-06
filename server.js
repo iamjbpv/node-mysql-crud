@@ -1,11 +1,11 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const mysqlConnection = require('./connection');
 const path = require('path');
+const bodyParser = require('body-parser');
+const peopleRouter = require('./routes/people.js');
 
 const app = express();
-// support parsing of application/json type post data
 app.use(bodyParser.json());
+app.use('/api/people', peopleRouter);
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*'); //  MIDDLEWARE to allow any address
@@ -23,8 +23,6 @@ app.use((req, res, next) => {
     // Pass to next layer of middleware
     next();
 });
-
-app.use('/api/people', require('./routes/people'));
 
 //static no dynamic files, server static files
 app.use(express.static(path.join(__dirname, 'client/dist')));
