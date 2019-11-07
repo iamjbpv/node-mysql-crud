@@ -50613,10 +50613,10 @@ var _mdbreact = require("mdbreact");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Alert = function Alert() {
-  return _react.default.createElement(_mdbreact.MDBContainer, null, _react.default.createElement(_mdbreact.MDBAlert, {
+  return _react.default.createElement(_mdbreact.MDBAlert, {
     color: "warning",
     dismiss: true
-  }, _react.default.createElement("strong", null, "Holy guacamole!"), " You should check in on some of those fields below."));
+  }, _react.default.createElement("strong", null, "Hello Guest!"), " Try out this DEMO!");
 };
 
 var _default = Alert;
@@ -50740,26 +50740,8 @@ function (_Component) {
     _defineProperty(_assertThisInitialized(_this), "loadData", function () {
       _axios.default.get("".concat(api_url, "/people")).then(function (res) {
         var persons = res.data;
-        var person_data = persons.map(function (person) {
-          return {
-            id: person.id,
-            email: person.email,
-            first_name: person.first_name,
-            last_name: person.last_name,
-            handle: _react.default.createElement(TableAction, {
-              handleClick: _this.handleClick,
-              person: person
-            }) // clickEvent: e => this.handleClick(e, person_data)
 
-          };
-        });
-        console.log(person_data);
-
-        _this.setState({
-          persons_table: _objectSpread({}, _this.state.persons_table, {
-            rows: person_data
-          })
-        });
+        _this.addActionMapper(persons);
       }).then(function () {
         console.log(_this.state.persons_table);
       });
@@ -50807,6 +50789,30 @@ function (_Component) {
       _this.toggleViaDt(1);
     });
 
+    _defineProperty(_assertThisInitialized(_this), "addActionMapper", function (persons) {
+      var person_response = persons.map(function (person) {
+        return {
+          id: person.id,
+          email: person.email,
+          first_name: person.first_name,
+          last_name: person.last_name,
+          handle: _react.default.createElement(TableAction, {
+            handleClick: _this.handleClick,
+            person: person
+          }) // clickEvent: e => this.handleClick(e, person_data)
+
+        };
+      });
+
+      var person_data = _this.state.persons_table.rows.concat(person_response);
+
+      _this.setState({
+        persons_table: _objectSpread({}, _this.state.persons_table, {
+          rows: person_data
+        })
+      });
+    });
+
     _defineProperty(_assertThisInitialized(_this), "savePerson", function () {
       var person_frm = _this.state.person_frm;
       var txnType = _this.state.txnType;
@@ -50815,16 +50821,11 @@ function (_Component) {
         _axios.default.post("".concat(api_url, "/people"), person_frm).then(function (res) {
           console.log(res.status);
           console.log(res.data[0]);
+          var persons = res.data;
 
           _this.toggleViaDt(1);
 
-          var person_data = _this.state.persons_table.rows.concat(res.data[0]);
-
-          _this.setState({
-            persons_table: _objectSpread({}, _this.state.persons_table, {
-              rows: person_data
-            })
-          });
+          _this.addActionMapper(persons);
         }).catch(function (error) {
           console.log(error.message);
         });
@@ -51128,7 +51129,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55568" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51162" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

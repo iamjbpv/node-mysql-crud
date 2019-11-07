@@ -31,9 +31,4 @@ CREATE TABLE `users` (
 
 /*Data for the table `users` */
 
-insert  into `users`(`id`,`email`,`first_name`,`last_name`,`password`,`is_deleted`) values (1,'iamjbpv@outlook.com141','Jb1423','Villamayor14','iamjbpv',0);
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+insert  into `users`(`id`,`email`,`first_name`,`last_name`,`password`,`is_deleted`) values (1,'iamjbpv@outlook.com141','Jb','Villamayor','iamjbpv',0);

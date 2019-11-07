@@ -4,6 +4,7 @@ const peopleRouter = express.Router();
 peopleRouter.get("/", People.list);
 peopleRouter.post("/", People.create);
 peopleRouter.put("/", People.update);
+peopleRouter.delete("/:id", People.deleteRow);
 module.exports = peopleRouter;
 
 

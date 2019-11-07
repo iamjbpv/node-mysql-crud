@@ -76,25 +76,7 @@ class App extends Component {
         axios.get(`${api_url}/people`)
         .then(res => {
             const persons = res.data;
-            let person_data = persons.map(person => (
-                {
-                    id: person.id,
-                    email: person.email,
-                    first_name: person.first_name,
-                    last_name: person.last_name,
-                    handle: <TableAction handleClick={this.handleClick} person={person} />,
-                    // clickEvent: e => this.handleClick(e, person_data)
-                }
-            ));
-
-            console.log(person_data);
-           
-            this.setState({
-                persons_table: {
-                      ...this.state.persons_table,
-                      rows: person_data
-                }
-            })
+            this.addActionMapper(persons);
         })
         .then( () => {
             console.log(this.state.persons_table);
@@ -143,6 +125,27 @@ class App extends Component {
         this.toggleViaDt(1);
     }
 
+    addActionMapper = (persons) => {
+        let person_response = persons.map(person => (
+            {
+                id: person.id,
+                email: person.email,
+                first_name: person.first_name,
+                last_name: person.last_name,
+                handle: <TableAction handleClick={this.handleClick} person={person} />,
+                // clickEvent: e => this.handleClick(e, person_data)
+            }
+        ));
+
+        const person_data = this.state.persons_table.rows.concat(person_response);
+        this.setState({
+            persons_table: {
+                ...this.state.persons_table,
+                rows: person_data
+            }
+        });
+    }
+
     savePerson = () => {
         const person_frm = this.state.person_frm;
         const txnType = this.state.txnType;
@@ -151,14 +154,9 @@ class App extends Component {
             .then(res => {
                 console.log(res.status);
                 console.log(res.data[0]);
+                const persons = res.data;
                 this.toggleViaDt(1);
-                const person_data = this.state.persons_table.rows.concat(res.data[0]);
-                this.setState({
-                    persons_table: {
-                        ...this.state.persons_table,
-                        rows: person_data
-                    }
-                });
+                this.addActionMapper(persons);
             })
             .catch(error => {
                 console.log(error.message)

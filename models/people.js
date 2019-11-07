@@ -1,6 +1,7 @@
 const connection = require("../connection.js");
-var People = function(body){
-    this.body = body;
+var People = function(){
+    this.id;
+    this.body;
     this.table_name= 'users';
 };
  
@@ -76,6 +77,28 @@ People.prototype.update = async function(){//Async
                                 throw error.message;
                             }
                         });
+                    } else {
+                        throw err.message;
+                    }
+                });
+            } else {
+                throw error.errno;
+            }
+        }); 
+    });
+};
+
+People.prototype.delete = async function(){//Async
+    const table_name = this.table_name;
+    const id = this.id;
+    return new Promise( (resolve) => { //Async
+        connection.getConnection(function(error, connection){
+            if(!error) {
+                var sql = `UPDATE ${table_name} SET is_deleted = 1 WHERE id = ${id}`;
+                // console.log(sql);
+                connection.query(sql, function (err, result) {
+                    if (!err){
+                        resolve(result);
                     } else {
                         throw err.message;
                     }
