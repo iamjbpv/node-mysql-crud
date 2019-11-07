@@ -15,7 +15,7 @@ import {
         MDBIcon 
 } from 'mdbreact';
 
-const api_url = 'http://localhost:3000/api'
+const api_url = '/api'
 
 const TableAction = ({ handleClick, person }) => {
     return(

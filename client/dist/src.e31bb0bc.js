@@ -50667,7 +50667,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var api_url = 'http://localhost:3000/api';
+var api_url = '/api';
 
 var TableAction = function TableAction(_ref) {
   var handleClick = _ref.handleClick,
@@ -51129,7 +51129,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51162" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52831" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
