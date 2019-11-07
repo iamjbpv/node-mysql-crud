@@ -50782,6 +50782,8 @@ function (_Component) {
     });
 
     _defineProperty(_assertThisInitialized(_this), "addPerson", function () {
+      _this.stateClearer(_this.state.person_frm);
+
       _this.setState({
         txnType: 'Create'
       });
@@ -50810,6 +50812,17 @@ function (_Component) {
         persons_table: _objectSpread({}, _this.state.persons_table, {
           rows: person_data
         })
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this), "stateClearer", function (clear_state) {
+      var reset_form = {};
+      Object.keys(clear_state).forEach(function (key) {
+        reset_form[key] = '';
+      });
+
+      _this.setState({
+        person_frm: reset_form
       });
     });
 
@@ -51129,7 +51142,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52831" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55688" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

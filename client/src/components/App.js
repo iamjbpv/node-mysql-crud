@@ -121,6 +121,7 @@ class App extends Component {
     }
 
     addPerson = () => {
+        this.stateClearer(this.state.person_frm);
         this.setState({ txnType: 'Create' });
         this.toggleViaDt(1);
     }
@@ -144,6 +145,14 @@ class App extends Component {
                 rows: person_data
             }
         });
+    }
+
+    stateClearer = (clear_state) => {
+        let reset_form = {};
+        Object.keys(clear_state).forEach(function (key) {
+            reset_form[key] = '';
+        });
+        this.setState({ person_frm : reset_form })
     }
 
     savePerson = () => {
