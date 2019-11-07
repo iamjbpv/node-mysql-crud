@@ -1,5 +1,5 @@
 const express = require('express');
-const People = require('../controllers/People.js');
+const People = require('../controllers/people.js');
 const peopleRouter = express.Router();
 peopleRouter.get("/", People.list);
 peopleRouter.post("/", People.create);
