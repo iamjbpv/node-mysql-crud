@@ -2,9 +2,9 @@
     "sample": "sample data",
     "db_config" : {
         "host": "remotemysql.com",
-        "user": "MSAyDs7tcL",
-        "password": "votzsAzIbN",
-        "database": "MSAyDs7tcL",
+        "user": "rWvALqXMo0",
+        "password": "Jtd8d24Q10",
+        "database": "rWvALqXMo0",
         "multipleStatements": true
     }
 }
